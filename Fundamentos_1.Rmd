@@ -1,0 +1,294 @@
+---
+title: "Fundamentos_1"
+author: "Laura Cifuentes"
+date: '2022-06-24'
+output: html_document # esto aparece cuando creamos  un markdown
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+            message = FALSE,
+            warning = FALSE)
+            #fig.with = 10) #cuando  queremos que elknift este sin escripts solo el texto y graficos 
+```
+
+
+
+```{r}
+library(BIOMASS)# Library para activar paquetes.......
+library(readxl)
+library(skimr)
+library(tidyverse)
+library(janitor)
+library(usethis)
+library("writexl")
+```
+
+
+
+
+```{r}
+Aglomerados_cotopaxi <-  read_excel("L:/udla_cotopaxi/r/23-06-22_Coordenadas_R_corregido2.xlsx",
+                                    na = "999",
+                                    col_types = c("guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "guess", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric")) # col_types cambia el tipo de vriable a numeric a ocarcter, etc... guess= adivina, numeric, date, text, skip
+View(Aglomerados_cotopaxi) # exportar la base de datos a R desde import Dataset
+
+
+tail(Aglomerados_cotopaxi,20)#me permite visualizar las ultimas 6 filas 
+skim(Aglomerados_cotopaxi)#resumen de mis datos, información detallada del tataframe, sd, media, histograma, tipo de variable
+sapply(Aglomerados_cotopaxi, class)# automatiza el proceso simplificando el resultado, me ayuda a ver las variables del objeto
+class(Aglomerados_cotopaxi)# que clase de objeto es por ejemplo que es un dataframe
+
+```
+
+
+
+
+```{r}
+Aglomerados_cotopaxi <- Aglomerados_cotopaxi %>% #limpiar nombres de variables, es lo primero que se debe hacer en un dataframe, pude ir con el mismo nombre o se pude cambiar el nombre del dataframe.
+  clean_names()
+Aglomerados_cotopaxi
+```
+
+
+
+
+```{r}
+use_course("https://github.com/Sagaciro/Week_12")#sirve para importar carpetas de bases de datos de internet
+```
+
+
+
+
+```{r}
+Aglomerados_cotopaxi %>% #USO DE LA VARIABLE SELECT PARA SELECCIONAR VARIABLES ESPECIFICAS
+select(dap1, genus, species) %>% 
+  
+```
+
+```{r}
+Aglomerados_cotopaxi %>% 
+  select(ends_with("plot")) #selecciona solo variables que terminan en algo ejemplo plot
+```
+
+```{r}
+Aglomerados_cotopaxi %>% 
+select(pom:year1)# selecciona un rango de variables
+```
+
+```{r}
+Aglomerados_cotopaxi %>% 
+  select(-pom) #selecciona todas menos la que no queremos
+```
+
+```{r}
+Aglomerados_cotopaxi %>% 
+  select(-(pom:ht1)) # elimina un rango de variables
+```
+
+
+
+```{r}
+Aglomerados_cotopaxi %>%
+mutate(provincia = "Pichincha")# aumenta nuevas variables ejemplo el titulo provincia y lo llena con pichincha
+```
+
+```{r}
+Aglomerados_cotopaxi %>%
+mutate(suma_dbm_dap1 = dbm + dap1) # crea una variable nueva basada en otras variables (sumas, restas, multiblicaciones, formulas)
+
+```
+
+```{r}
+Aglomerados_cotopaxi %>%
+mutate(latitude_3digitos = round(latitude, digits = 3)) %>% 
+  # crea una variable nueva sin digitos para redondear numeros usa la funcion round y se creo la variable latitude 3 digitos.
+mutate(provincia = "Cotopaxi")
+```
+
+
+
+```{r}
+Aglomerados_cotopaxi %>%
+  filter(species == "nitens")# filtra filas, ejemplo si quiero elegir solo nitens escojo la columna que quiero filtrar y luego la filas que quiero que elija.
+```
+
+```{r}
+Aglomerados_cotopaxi %>%
+  filter(genus != "Pinus") #elige todas las filas menos la que fitro, por ejemplo eliminamos a todo el genero pinus 
+
+```
+
+```{r}
+Aglomerados_cotopaxi %>%
+  filter(site %in% c("SANTA_ANA", "SAN_JOAQUIN", "COLCAS"))# FILTRA LOS ELEMTOS QUE ELEGIMOS
+```
+
+```{r}
+Aglomerados_cotopaxi %>%
+  filter(genus == "Pinus" & site == "COLCAS") # FITRA DOS VARIABLES
+
+```
+
+```{r}
+Aglomerados_cotopaxi %>%
+  filter(altitud_plot > 3370) %>% 
+  select(altitud_plot) # elige elementos mayor que
+```
+
+
+```{r}
+Aglomerados_cotopaxi %>%
+  drop_na(ht1) %>% 
+  select(ht1)# elimina elementos vacios, se puede usar filter para seleccionar elemetos especificos
+```
+
+
+
+```{r}
+Aglomerados_cotopaxi %>%
+  summarize(dap1_media = mean(dap1, na.rm = TRUE),
+            dap1_sd = sd(dap1, na.rm = TRUE),
+            dap1_rango = rank(dap1))
+# se debe crear una nueva variable,permite obtener calculos de media, sd, varianza, maximo,  minimo, carianza, rango.  na.rm  para remover NA, por ejemplo creamos dap1_ media, dap1_sd, dap1, rank que son nuevas variables y usamos funciones para el calculo
+
+```
+
+
+```{r}
+Aglomerados_especies_sd <- Aglomerados_cotopaxi %>%
+  group_by(species) %>% 
+  summarize(dap1_sd = sd(dap1, na.rm = TRUE)) # group_by permite hacer calculos de estadistica descriptiva  combinado con summarize por grupos deacuerdo a la variable que elija, por ejemplo con group_ by elejimos la variable species para que lo agrupe, en este caso  creamos un objero llamado aglomerados _species_sd y agrupo a las 4 especies y de cada una saco la sd
+            
+```
+
+
+```{r}
+Aglomerados_cotopaxi %>%
+  group_by(site, species) %>% 
+  summarize(dap1_sd = sd(dap1, na.rm = TRUE)) # group_by permite hacer calculos de estadistica descriptiva  combinado con summarize por grupos deacuerdo a la variable que elija, se puede usar dos variabes y las agrupa por sitio por ejemplo y vada sitio por especie
+```
+
+
+```{r}
+Aglomerados_cotopaxi %>%
+  count(genus, species, site) #%>% 
+  # drop_na(genus)
+
+# cuenta las observaciones, se puede usar drop_na() para eliminar observaciones vacias 
+
+
+```
+
+
+```{r}
+Aglomerados_cotopaxi %>%
+  
+  arrange(dbm) %>% 
+  select(dbm) # ordena de menor a mayor por defecto
+
+
+```
+
+
+```{r}
+Aglomerados_cotopaxi %>%
+arrange(desc(dbm)) %>% #ordena de mayor a menor
+  select(dbm)
+```
+
+```{r}
+Aglomerados_cotopaxi %>%
+  group_by(species, site) %>% 
+  summarize(dap1_sd = sd(dap1, na.rm = TRUE)) %>% 
+  drop_na(dap1_sd) %>% 
+  arrange(site)
+
+  
+```
+
+
+
+```{r}
+
+write_xlsx(Aglomerados_especies_sd, "Aglomerados_especies_sd.xlsx")# guardar dataframe en el computador, primero colocamos como quieres que se llame y luego colocamos cual es el archivo.
+
+#write.csv(Aglomerados_especies_sd, "Aglomerados_especies_sd", row.names = FALSE)
+```
+
+
+```{r}
+Aglomerados_cotopaxi %>%
+  tabyl(genus, site) %>% #con dos variables, cuenta el numero de observaciones, tabla cruzada, cuando es una sola variable de frecuencias e incluye porcentaje
+  adorn_totals(where = c("row", "col")) %>% # añade totales al final
+  adorn_percentages() %>% # calcula los porcentajes de las observaciones
+  adorn_pct_formatting(digits = 0, rounding = "half up") %>%  #redondea los pocentages
+  adorn_ns() %>% #porcentaje mas el número absoluto
+  adorn_title(placement = "combined") # muestra los titulos para especificar que variables estamos cruzando
+
+  
+
+
+
+```
+
+```{r}
+Aglomerados_cotopaxi %>%
+  tabyl(genus, site, pom) %>% #con tres variables, cuenta el numero de observaciones, tabla cruzada, cuando es una sola variable de frecuencias e incluye porcentaje
+  adorn_totals(where = c("row", "col")) %>% # añade totales al final
+  adorn_percentages() %>% # calcula los porcentajes de las observaciones
+  adorn_pct_formatting(digits = 0, rounding = "half up") %>%  #redondea los pocentages
+  adorn_ns() %>% #porcentaje mas el número absoluto
+  adorn_title(placement = "combined") # muestra los titulos para especificar que variables estamos cruzando
+
+```
+
+
+#TIDY DATA
+
+```{r}
+ NECROMASA <- read_excel(path = "~/R/AGLOMERADOS_COTOPAXI/base-datos-AC_20-6-22.xlsx",
+                         sheet = "NECROMASA") %>% #para importar archivos en formato excel y elegir la hoja que quiero que exporte del excel
+  clean_names()
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+

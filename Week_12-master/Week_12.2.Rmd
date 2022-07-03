@@ -1,0 +1,108 @@
+---
+title: "Resistome and *Escherichia coli* strains in pediatric fecal samples"
+description: |
+  Report of findings from metagenome data.
+author:
+  - name: Sara G. Cifuentes1, Jay Graham2, Fernanda Loayza1, Carlos Saraiva1, Liseth Salinas1, Gabriel Trueba1 , Paúl A. Cárdenas1
+    affiliation: 1Universidad San Francisco de Quito USFQ, Colegio de Ciencias Biológicas y Ambientales, Instituto de Microbiología, Quito, Pichincha, Ecuador; 2University of California, Environmental Health Sciences Division, Berkeley, California, USA
+
+    affiliation_url: https://www.usfq.edu.ec/es/institutos-de-investigacion/instituto-de-microbiologia; https://publichealth.berkeley.edu/
+date: "`r Sys.Date()`"
+output: 
+  distill::distill_article:
+    theme: journal
+    fig_height: 6
+    fig_width: 12
+    fig_caption: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      message = FALSE,
+                      warning = FALSE,
+                      fig.width = 10)
+```
+
+# ***Escherichia coli* strain** detection and characterization on fecal samples
+
+The method used to identify and characterize ***E. coli* strains** in fecal samples was taken and modified from [PanPhlAn 3.](https://github.com/SegataLab/panphlan)
+
+> *"PanPhlAn is a strain-level metagenomic profiling tool for identifying the gene composition of individual strains in metagenomic samples."*^[Integrating taxonomic, functional, and strain-level profiling of diverse microbial communities with bioBakery 3 Francesco Beghini, Lauren J McIver, Aitor Blanco-Miguez, Leonard Dubois, Francesco Asnicar, Sagun Maharjan, Ana Mailyan, Andrew Maltez Thomas, Paolo Manghi, Matthias Scholz, Mireia Valles-Colomer, George Weingart, Yancong Zhang, Moreno Zolfo, Curtis Huttenhower, Eric A Franzosa, Nicola Segata. eLife (2021)] PanPhlAn is a tool for culture-free microbial population studies based on metagenomic data and it does not require genome assembly. 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+```
+
+## Graphs
+
+```{r, include=FALSE}
+library(ComplexHeatmap)
+library(tidyverse)
+library(readr)
+library(gridtext)
+library(dplyr)
+library(base)
+```
+
+```{r, include=FALSE, echo=FALSE}
+profile_ecoli_df <- read_csv("matrix_profile_ecoli")
+
+ecoli_pangenome_annot <- read.delim("panphlan_Escherichia_coli_annot.tsv", header=FALSE)
+
+colnames(ecoli_pangenome_annot)[1] <- "Annotation"
+
+colnames(ecoli_pangenome_annot) [2] <- "Genes"
+
+ecoli_pangenome_annot <- ecoli_pangenome_annot %>% select(Annotation:Genes)
+
+nodup_ecoli_pangenome <-  ecoli_pangenome_annot %>% 
+  distinct(Annotation, .keep_all = TRUE)
+
+```
+
+```{r, include=FALSE, echo=FALSE}
+test1 <- profile_ecoli_df %>% 
+  head(100) %>% 
+  rowwise() %>% 
+  rename_with(~gsub("_ecoli.csv", "", .x)) %>% 
+  left_join(nodup_ecoli_pangenome) %>% 
+  relocate(Genes, .before = PR002) %>% 
+  select(-Annotation) %>% 
+  remove_rownames() %>% 
+  column_to_rownames(var = 'Genes') %>% 
+  select((1:50), -PR019, -PR040, -PR044, -PR051, -PR071, -PR125, -PR126)
+
+```
+
+## Heatmap and hierarchical clustering analysis
+
+```{r, echo=FALSE, warning=FALSE}
+colors <- c("yellow", "navyblue")
+
+Heatmap(test1,
+        name = "presence = 1/absence = 0",
+        column_title = gt_render ("High diversity of <span style = 'color: navyblue'>*Escherichia coli*</span> strains<br>in pediatric fecal samples in rural and peri-urban areas of Quito, Ecuador"),
+        column_split = 3, 
+        column_title_gp = gpar(fontsize = 10, fontface = "bold"),
+        row_title = "Genes",
+        row_split = 3,
+        row_names_gp = gpar(fontsize = 3),
+        column_names_gp = gpar(fontsize = 5), 
+        col = colors,
+        column_dend_height = unit(1, "cm"),
+        clustering_distance_columns = "euclidean",
+        clustering_method_columns = "single", 
+        clustering_distance_rows = "euclidean",
+        heatmap_height = unit (10, "cm")) 
+
+```
+
+```{r, include=FALSE, echo=FALSE}
+#Learn more about using Distill for R Markdown at <https://rstudio.github.io/distill>.
+```
+
+
+
+
+
+

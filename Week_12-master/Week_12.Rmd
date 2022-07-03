@@ -1,0 +1,39 @@
+---
+title: "Week_12"
+author: "Sara Cifuentes"
+date: '2022-06-08'
+output: 
+  html_document:
+    theme: cosmo
+    toc: TRUE
+    toc_depth: 2
+    toc_float: TRUE
+    fig_height: 20
+    fig_width: 8
+    fig_caption: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      message = FALSE,
+                      warning = FALSE,
+                      fig.width = 10)
+```
+
+```{r}
+
+```
+
+# ***Escherichia coli* strain** detection and characterization on fecal samples
+
+The method used to identify and characterize ***E. coli* strains** in fecal samples was taken and modified from [PanPhlAn 3.](https://github.com/SegataLab/panphlan)
+
+> *"PanPhlAn is a strain-level metagenomic profiling tool for identifying the gene composition of individual strains in metagenomic samples."*^[Integrating taxonomic, functional, and strain-level profiling of diverse microbial communities with bioBakery 3 Francesco Beghini, Lauren J McIver, Aitor Blanco-Miguez, Leonard Dubois, Francesco Asnicar, Sagun Maharjan, Ana Mailyan, Andrew Maltez Thomas, Paolo Manghi, Matthias Scholz, Mireia Valles-Colomer, George Weingart, Yancong Zhang, Moreno Zolfo, Curtis Huttenhower, Eric A Franzosa, Nicola Segata. eLife (2021)] PanPhlAn is a tool for culture-free microbial population studies based on metagenomic data and it does not require genome assembly. 
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+```
+
+## Graphs
