@@ -255,6 +255,11 @@ Aglomerados_cotopaxi %>%
 
 
 
+```{r}
+
+2+3
+
+```
 
 
 
