@@ -153,21 +153,28 @@ datos2022 <- read_excel("~/R/AGLOMERADOS_COTOPAXI/datos2022.xlsx") %>%
 clean_names() 
 
 
+sum(is.na (datos2022))
+na_count <-sapply(datos2022, function(y) sum(length(which(is.na(y)))))
+na_count <- data.frame(na_count)
+
+sum(table(datos2022$codigo)-1)#cuenta valores duplicados en una variable
+
+
 #full join, unir bases sin perdere datos---------------------------------------------------------------
 
 
 datos_2017_2022 <- datos2022 %>%# base que sera la base a la cual se va añadir otra base
   full_join(datos2017,
-            by = "codigo" ) %>% 
-  rename(dap2022 = dap_cm) %>% # para reeplazar se coloca primero la variable vieja y luego la variable nueva
-  rename(dap2017 = dap)
+            by = "codigo" )  
+ # rename(dap2022 = dap_cm) %>% # para reeplazar se coloca primero la variable vieja y luego la variable nueva
+  #rename(dap2017 = dap)
 
 # export data -------------------------------------------------------------
 
   write.csv(datos_2017_2022, "~/R/AGLOMERADOS_COTOPAXI/datos_2017_2022.csv")
 
   
-
+2+10
 
 
 
