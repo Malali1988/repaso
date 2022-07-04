@@ -174,9 +174,6 @@ datos_2017_2022 <- datos2022 %>%# base que sera la base a la cual se va añadir 
   write.csv(datos_2017_2022, "~/R/AGLOMERADOS_COTOPAXI/datos_2017_2022.csv")
 
   
-2+10
-
-#respaso
 
 
 
