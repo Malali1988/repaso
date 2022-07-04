@@ -176,6 +176,7 @@ datos_2017_2022 <- datos2022 %>%# base que sera la base a la cual se va añadir 
   
 2+10
 
+#respaso
 
 
 
